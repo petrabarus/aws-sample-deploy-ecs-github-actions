@@ -22,3 +22,12 @@ jobs:
               run: |
                 docker build -t ${{ secrets.REGISTRY_URI }}:$IMAGE_TAG .
                 docker push ${{ secrets.REGISTRY_URI }}:$IMAGE_TAG
+            - name: Render Amazon ECS Task Definition
+              id: render-web-container
+              uses: aws-actions/amazon-ecs-render-task-definition@v1
+              env:
+                IMAGE_TAG: ${{ github.sha }}
+              with:
+                task-definition: task-definition.json
+                container-name: web
+                image: ${{ secrets.REGISTRY_URI }}:$IMAGE_TAG
