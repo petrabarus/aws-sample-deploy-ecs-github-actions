@@ -76,13 +76,15 @@ class AppStack extends Stack {
       resources: ['*'],
     }));
 
+    const taskDef = this.service.service.taskDefinition;
     this.user.addToPolicy(new PolicyStatement({
       effect: Effect.ALLOW,
       actions: [
         'iam:PassRole'
       ],
       resources: [
-        this.service.service.taskDefinition.taskRole.roleArn
+        taskDef.taskRole.roleArn,
+        taskDef.executionRole!.roleArn,
       ]
     }));
   }
