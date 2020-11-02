@@ -1,14 +1,18 @@
-# Welcome to your CDK TypeScript project!
+# AWS Sample Deploying Container Application to AWS using AWS for GitHub Actions
 
-This is a blank project for TypeScript development with CDK.
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+## Running Locally
 
-## Useful commands
+To run locally
+```bash
+docker build -t webserver
+docker run -it --rm -d -p 8080:80 --name web webserver
+```
 
- * `npm run build`   compile typescript to js
- * `npm run watch`   watch for changes and compile
- * `npm run test`    perform the jest unit tests
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk synth`       emits the synthesized CloudFormation template
+## Deploying CDK
+
+To create resources, execute.
+
+```
+
+```
