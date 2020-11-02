@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
-import { App, CfnOutput, Construct, Stack, StackProps } from '@aws-cdk/core';
+import { App, CfnOutput, Construct, Duration, Stack, StackProps } from '@aws-cdk/core';
 import { CfnAccessKey, Effect, PolicyStatement, User } from '@aws-cdk/aws-iam';
 import { Repository } from '@aws-cdk/aws-ecr';
 import { Cluster, ContainerImage, ICluster } from '@aws-cdk/aws-ecs';
@@ -45,7 +45,8 @@ class AppStack extends Stack {
     this.cluster = new Cluster(this, 'Cluster');
   }
 
-  createEcsService() {
+  createEcsService() {    
+
     this.service = new ApplicationLoadBalancedFargateService(this, 'Service', {
       cluster: this.cluster,
       memoryLimitMiB: 1024,
@@ -55,10 +56,19 @@ class AppStack extends Stack {
         containerName: 'web',
       },
     });
+    this.service.targetGroup.configureHealthCheck({
+      "interval": Duration.seconds(5),
+      "timeout": Duration.seconds(4),
+      "healthyThresholdCount": 2,
+      "unhealthyThresholdCount": 2,
+      "healthyHttpCodes": "200,301,302"
+    });
+
     this.user.addToPolicy(new PolicyStatement({
       effect: Effect.ALLOW,
       actions: [
         'ecs:ListTaskDefinitions',
+        'ecs:DescribeTaskDefinition'
       ],
       resources: ['*'],
     }));
