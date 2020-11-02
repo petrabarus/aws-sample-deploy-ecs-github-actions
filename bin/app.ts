@@ -96,7 +96,8 @@ class AppStack extends Stack {
     this.user.addToPolicy(new PolicyStatement({
       effect: Effect.ALLOW,
       actions: [
-        'ecs:DescribeServices'
+        'ecs:DescribeServices',
+        'ecs:UpdateService'
       ],
       resources: [
         this.service.service.serviceArn
