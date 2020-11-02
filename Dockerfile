@@ -5,4 +5,4 @@
 # docker run -it --rm -d -p 8080:80 --name web webserver
 #########
 FROM nginx:latest
-COPY ./index.html /usr/share/nginx/html/index.html
+COPY ./src/index.html /usr/share/nginx/html/index.html
