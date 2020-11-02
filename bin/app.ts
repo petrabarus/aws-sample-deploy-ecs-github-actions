@@ -30,6 +30,14 @@ class AppStack extends cdk.Stack {
   
   createEcrRepo() {
     this.repo = new ecr.Repository(this, 'Repository');
+    this.user.addToPolicy(new iam.PolicyStatement({
+      resources: ['*'],
+      effect: iam.Effect.ALLOW,
+      actions: [
+        'ecr:GetAuthorizationToken'
+      ]
+    }));
+    this.repo.grantPullPush(this.user);
   }
   
   createEcsCluster() {
