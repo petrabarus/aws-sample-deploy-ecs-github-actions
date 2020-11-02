@@ -36,7 +36,7 @@ jobs:
               with:
                 task-definition: task-definition.json
                 container-name: web
-                image: ${{ secrets.REGISTRY_URI }}:$IMAGE_TAG
+                image: ${{ secrets.REGISTRY_URI }}:${{ env.IMAGE_TAG }}
             - name: Test
               run: |
                  cat ${{ steps.render-web-container.outputs.task-definition }}
