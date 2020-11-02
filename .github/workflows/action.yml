@@ -27,7 +27,7 @@ jobs:
                 # Obtain latest task definition
                 TASK_DEFINITION_ARN=`aws ecs list-task-definitions --family ${{ secrets.TASK_DEFINITION_FAMILY }} --sort DESC | jq -r '.taskDefinitionArns[0]'`
                 echo $TASK_DEFINITION_ARN
-                aws ecs describe-task-definition --task-definition $TASK_DEFINITION_ARN > task-definition.json
+                aws ecs describe-task-definition --task-definition $TASK_DEFINITION_ARN | jq -r '.taskDefinition' > task-definition.json
             - name: Render Amazon ECS Task Definition
               id: render-web-container
               uses: aws-actions/amazon-ecs-render-task-definition@v1
