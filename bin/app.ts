@@ -52,6 +52,7 @@ class AppStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'AccessKeyId', { value: this.key.ref });
     new cdk.CfnOutput(this, 'AccessKeySecret', { value: this.key.attrSecretAccessKey });
     new cdk.CfnOutput(this, 'RepositoryName', { value: this.repo.repositoryName });
+    new cdk.CfnOutput(this, 'RepositoryUri', { value: this.repo.repositoryUri });
     new cdk.CfnOutput(this, 'ClusterArn', { value: this.cluster.clusterArn });
   }
 }
