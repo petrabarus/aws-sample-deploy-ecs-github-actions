@@ -70,7 +70,8 @@ class AppStack extends Stack {
       effect: Effect.ALLOW,
       actions: [
         'ecs:ListTaskDefinitions',
-        'ecs:DescribeTaskDefinition'
+        'ecs:DescribeTaskDefinition',
+        'ecs:RegisterTaskDefinition',
       ],
       resources: ['*'],
     }));
