@@ -83,6 +83,7 @@ class AppStack extends Stack {
     new CfnOutput(this, 'RepositoryUri', { value: this.repo.repositoryUri });
     new CfnOutput(this, 'ClusterArn', { value: this.cluster.clusterArn });
     new CfnOutput(this, 'ClusterName', { value: this.cluster.clusterName });
+    new CfnOutput(this, 'ServiceName', { value: this.service.service.serviceName });
     new CfnOutput(this, 'TaskDefinitionFamily', { value: this.service.taskDefinition.family });
   }
 }
