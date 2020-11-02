@@ -56,6 +56,8 @@ class AppStack extends Stack {
         containerName: 'web',
       },
     });
+
+    //Faster update
     this.service.targetGroup.configureHealthCheck({
       "interval": Duration.seconds(5),
       "timeout": Duration.seconds(4),
