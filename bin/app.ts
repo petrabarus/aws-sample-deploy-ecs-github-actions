@@ -1,20 +1,19 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
-import * as cdk from '@aws-cdk/core';
-import * as iam from '@aws-cdk/aws-iam';
-import * as ecs from '@aws-cdk/aws-ecs';
-import * as ecsPatterns from '@aws-cdk/aws-ecs-patterns';
-import * as ecr from '@aws-cdk/aws-ecr';
-import { CfnOutput } from '@aws-cdk/core';
+import { App, CfnOutput, Construct, Stack, StackProps } from '@aws-cdk/core';
+import { CfnAccessKey, Effect, PolicyStatement, User } from '@aws-cdk/aws-iam';
+import { Repository } from '@aws-cdk/aws-ecr';
+import { Cluster, ContainerImage, ICluster } from '@aws-cdk/aws-ecs';
+import { ApplicationLoadBalancedFargateService } from '@aws-cdk/aws-ecs-patterns';
 
-class AppStack extends cdk.Stack {
-  private user: iam.User;
-  private key: iam.CfnAccessKey;
-  private repo: ecr.Repository;
-  private cluster: ecs.ICluster;
-  private service: ecsPatterns.ApplicationLoadBalancedFargateService;
+class AppStack extends Stack {
+  private user: User;
+  private key: CfnAccessKey;
+  private repo: Repository;
+  private cluster: ICluster;
+  private service: ApplicationLoadBalancedFargateService;
 
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
     this.createIamUser();
     this.createEcrRepo();
@@ -24,17 +23,17 @@ class AppStack extends cdk.Stack {
   }
 
   createIamUser() {
-    this.user = new iam.User(this, 'User');
-    this.key = new iam.CfnAccessKey(this, 'AccessKey', {
+    this.user = new User(this, 'User');
+    this.key = new CfnAccessKey(this, 'AccessKey', {
       userName: this.user.userName,
     });
   }
   
   createEcrRepo() {
-    this.repo = new ecr.Repository(this, 'Repository');
-    this.user.addToPolicy(new iam.PolicyStatement({
+    this.repo = new Repository(this, 'Repository');
+    this.user.addToPolicy(new PolicyStatement({
       resources: ['*'],
-      effect: iam.Effect.ALLOW,
+      effect: Effect.ALLOW,
       actions: [
         'ecr:GetAuthorizationToken'
       ]
@@ -43,31 +42,31 @@ class AppStack extends cdk.Stack {
   }
   
   createEcsCluster() {
-    this.cluster = new ecs.Cluster(this, 'Cluster');
+    this.cluster = new Cluster(this, 'Cluster');
   }
 
   createEcsService() {
-    this.service = new ecsPatterns.
-    ApplicationLoadBalancedFargateService(this, 'Service', {
+    this.service = new ApplicationLoadBalancedFargateService(this, 'Service', {
       cluster: this.cluster,
       memoryLimitMiB: 1024,
       cpu: 512,
       taskImageOptions: {
-        image: ecs.ContainerImage.fromRegistry("amazon/amazon-ecs-sample"),
+        image: ContainerImage.fromRegistry("amazon/amazon-ecs-sample"),
         containerName: 'web',
       },
     });
   }
 
   printOutput() {
-    new cdk.CfnOutput(this, 'AccessKeyId', { value: this.key.ref });
-    new cdk.CfnOutput(this, 'AccessKeySecret', { value: this.key.attrSecretAccessKey });
-    new cdk.CfnOutput(this, 'RepositoryName', { value: this.repo.repositoryName });
-    new cdk.CfnOutput(this, 'RepositoryUri', { value: this.repo.repositoryUri });
-    new cdk.CfnOutput(this, 'ClusterArn', { value: this.cluster.clusterArn });
-    new cdk.CfnOutput(this, 'ClusterName', { value: this.cluster.clusterName });
+    new CfnOutput(this, 'AccessKeyId', { value: this.key.ref });
+    new CfnOutput(this, 'AccessKeySecret', { value: this.key.attrSecretAccessKey });
+    new CfnOutput(this, 'RepositoryName', { value: this.repo.repositoryName });
+    new CfnOutput(this, 'RepositoryUri', { value: this.repo.repositoryUri });
+    new CfnOutput(this, 'ClusterArn', { value: this.cluster.clusterArn });
+    new CfnOutput(this, 'ClusterName', { value: this.cluster.clusterName });
+    new CfnOutput(this, 'TaskDefinitionFamily', { value: this.service.taskDefinition.family });
   }
 }
 
-const app = new cdk.App();
+const app = new App();
 new AppStack(app, 'ECSDeployGitHubActionApp');
