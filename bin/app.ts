@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import { App, CfnOutput, Construct, Duration, Stack, StackProps } from '@aws-cdk/core';
-import { CfnAccessKey, Effect, PolicyStatement, User } from '@aws-cdk/aws-iam';
+import { CfnAccessKey, Effect, PolicyDocument, PolicyStatement, User } from '@aws-cdk/aws-iam';
 import { Repository } from '@aws-cdk/aws-ecr';
 import { Cluster, ContainerImage, ICluster } from '@aws-cdk/aws-ecs';
 import { ApplicationLoadBalancedFargateService } from '@aws-cdk/aws-ecs-patterns';
+import { truncateSync } from 'fs';
 
 class AppStack extends Stack {
   private user: User;
@@ -66,6 +67,10 @@ class AppStack extends Stack {
       "healthyHttpCodes": "200,301,302"
     });
 
+    this.setUpECSPermissions();
+  }
+
+  setUpECSPermissions() {
     this.user.addToPolicy(new PolicyStatement({
       effect: Effect.ALLOW,
       actions: [
@@ -85,6 +90,16 @@ class AppStack extends Stack {
       resources: [
         taskDef.taskRole.roleArn,
         taskDef.executionRole!.roleArn,
+      ]
+    }));
+
+    this.user.addToPolicy(new PolicyStatement({
+      effect: Effect.ALLOW,
+      actions: [
+        'ecs:DescribeServices'
+      ],
+      resources: [
+        this.service.service.serviceArn
       ]
     }));
   }
