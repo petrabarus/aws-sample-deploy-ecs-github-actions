@@ -75,6 +75,16 @@ class AppStack extends Stack {
       ],
       resources: ['*'],
     }));
+
+    this.user.addToPolicy(new PolicyStatement({
+      effect: Effect.ALLOW,
+      actions: [
+        'iam:PassRole'
+      ],
+      resources: [
+        this.service.service.taskDefinition.taskRole.roleArn
+      ]
+    }));
   }
 
   printOutput() {
