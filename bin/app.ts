@@ -35,7 +35,7 @@ class AppStack extends Stack {
       resources: ['*'],
       effect: Effect.ALLOW,
       actions: [
-        'ecr:GetAuthorizationToken'
+        'ecr:GetAuthorizationToken',
       ]
     }));
     this.repo.grantPullPush(this.user);
@@ -51,10 +51,17 @@ class AppStack extends Stack {
       memoryLimitMiB: 1024,
       cpu: 512,
       taskImageOptions: {
-        image: ContainerImage.fromRegistry("amazon/amazon-ecs-sample"),
+        image: ContainerImage.fromRegistry("nginx:latest"),
         containerName: 'web',
       },
     });
+    this.user.addToPolicy(new PolicyStatement({
+      effect: Effect.ALLOW,
+      actions: [
+        'ecs:ListTaskDefinitions',
+      ],
+      resources: ['*'],
+    }));
   }
 
   printOutput() {
