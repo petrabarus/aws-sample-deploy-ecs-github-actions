@@ -39,7 +39,7 @@ jobs:
                 image: ${{ secrets.REGISTRY_URI }}:$IMAGE_TAG
             - name: Test
               run: |
-                 cat task-definition.json
+                 cat ${{ steps.render-web-container.outputs.task-definition }}
             - name: Deploy to Amazon ECS Service
               uses: aws-actions/amazon-ecs-deploy-task-definition@v1
               with:
