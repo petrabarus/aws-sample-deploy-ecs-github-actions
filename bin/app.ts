@@ -71,6 +71,7 @@ class AppStack extends Stack {
   }
 
   setUpECSPermissions() {
+    //Allow getting task definition for update.
     this.user.addToPolicy(new PolicyStatement({
       effect: Effect.ALLOW,
       actions: [
@@ -81,6 +82,7 @@ class AppStack extends Stack {
       resources: ['*'],
     }));
 
+    //Allow passing role to task & execution roles
     const taskDef = this.service.service.taskDefinition;
     this.user.addToPolicy(new PolicyStatement({
       effect: Effect.ALLOW,
@@ -93,6 +95,7 @@ class AppStack extends Stack {
       ]
     }));
 
+    //Allow updating task def of service
     this.user.addToPolicy(new PolicyStatement({
       effect: Effect.ALLOW,
       actions: [
@@ -103,6 +106,9 @@ class AppStack extends Stack {
         this.service.service.serviceArn
       ]
     }));
+
+    //Allow service to pull image
+    this.repo.grantPull(this.service.taskDefinition.executionRole!);
   }
 
   printOutput() {
